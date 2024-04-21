@@ -27,7 +27,7 @@ func _physics_process(delta):
 		print("Puck velocity: ", puck_velocity)
 		print("Puck angular velocity: ", puck_angular_velocity)
 		
-		if puck_velocity.length() < 0.5:  # Increased threshold to 0.5
+		if puck_velocity.length() < 0.5:  # Increased scoring velocity threshold to 0.5
 			award_points()
 			points_awarded = true
 

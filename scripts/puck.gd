@@ -49,6 +49,7 @@ func _physics_process(delta):
 		var direction = (mouse_pos - viewport_size / 2).normalized()
 		
 		# Limit the aiming direction to a range relative to the puck's forward direction
+		# Needs to be fixed w/ recent rotation/spin update
 		var aim_limit_radians = deg_to_rad(aim_limit_degrees)
 		var angle = atan2(direction.y, direction.x)
 		angle = clamp(angle, -aim_limit_radians, aim_limit_radians)
