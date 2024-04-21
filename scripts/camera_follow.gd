@@ -6,7 +6,6 @@ var look_at_offset = Vector3(0, 0, 0)  # Adjust the look-at offset as needed
 var follow_speed = 5.0  # Adjust the follow speed as needed
 
 func _ready():
-	# Assuming the puck scene is named "Puck" and is a sibling of the camera node
 	puck = get_parent().get_node("/root/shuffleboard/puck")
 
 func _process(delta):
