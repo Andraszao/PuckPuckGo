@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://64dwnhqsl6qf"]
+
+[ext_resource type="Script" path="res://scripts/score_area.gd" id="1_qnhwa"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_i8u5i"]
+size = Vector3(4, 2, 8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7asci"]
+transparency = 1
+albedo_color = Color(0.313726, 0.454902, 0.658824, 0.360784)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wae28"]
+material = SubResource("StandardMaterial3D_7asci")
+size = Vector3(4, 8, 2)
+
+[node name="score_area" type="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_qnhwa")
+
+[node name="score_area_collision" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_i8u5i")
+
+[node name="score_area_mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("BoxMesh_wae28")
+
+[connection signal="body_entered" from="." to="." method="_on_score_area_collision_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_score_area_collision_body_exited"]

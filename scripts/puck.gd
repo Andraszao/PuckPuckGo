@@ -23,18 +23,20 @@ func _ready():
 	# Create the power bar indicator
 	power_bar = MeshInstance3D.new()
 	var power_bar_mesh = BoxMesh.new()
-	power_bar_mesh.size = Vector3(0.1, 0.5, 0.1)  # Adjust the size of the power bar
+	power_bar_mesh.size = Vector3(0.1, 0.1, 0.1)  # Initial size of the power bar
 	power_bar.mesh = power_bar_mesh
 	
-	# Offset the power bar to the right and raise it on the Y-axis
+	# Offset the power bar to the right and raise it above the puck
 	power_bar.transform.origin = Vector3(1.0, 0.5, 0.0)  # Adjust the offset as needed
 	
 	add_child(power_bar)
+	power_bar.visible = false  # Hide the power bar initially
 
 func _input(event):
 	if event.is_action_pressed("aim_puck"):
 		is_aiming = true
 		power_bar.visible = true  # Show the power bar when aiming
+		power = 0  # Reset the power when starting to aim
 	elif event.is_action_released("aim_puck") and is_aiming:
 		launch_puck()
 		is_aiming = false
@@ -87,6 +89,9 @@ func update_power_bar(delta):
 	# Update the power bar's height based on the power value
 	var power_ratio = power / 100.0
 	power_bar.mesh.size.y = power_bar_max_height * power_ratio
+	
+	# Adjust the power bar's position to grow upwards
+	power_bar.transform.origin.y = 0.5 + (power_bar_max_height * power_ratio) / 2
 	
 	# Update the power bar's color based on the power level
 	var power_bar_material = StandardMaterial3D.new()

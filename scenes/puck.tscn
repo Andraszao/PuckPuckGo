@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/puck.gd" id="1_x1hl4"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_k1jv7"]
-friction = 0.0
+friction = 0.1
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ynh6h"]
 height = 0.25
@@ -16,13 +16,14 @@ material = SubResource("StandardMaterial3D_8xwx0")
 height = 0.25
 
 [node name="puck" type="RigidBody3D"]
+collision_layer = 3
+collision_mask = 3
 mass = 0.5
 physics_material_override = SubResource("PhysicsMaterial_k1jv7")
-gravity_scale = 0.5
 can_sleep = false
 continuous_cd = true
 contact_monitor = true
-linear_damp = 2.0
+linear_damp = 0.5
 script = ExtResource("1_x1hl4")
 
 [node name="puck_collider" type="CollisionShape3D" parent="."]
