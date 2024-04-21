@@ -20,8 +20,13 @@ func _on_score_area_collision_body_exited(body):
 
 func _physics_process(delta):
 	if puck_inside and not points_awarded:
-		var puck_velocity = get_tree().get_nodes_in_group("puck")[0].linear_velocity
+		var puck = get_tree().get_nodes_in_group("puck")[0]
+		var puck_velocity = puck.linear_velocity
+		var puck_angular_velocity = puck.angular_velocity
+		
 		print("Puck velocity: ", puck_velocity)
+		print("Puck angular velocity: ", puck_angular_velocity)
+		
 		if puck_velocity.length() < 0.5:  # Increased threshold to 0.5
 			award_points()
 			points_awarded = true

@@ -14,13 +14,13 @@ var power_bar = null  # Power bar indicator
 var power_bar_max_height = 1.0  # Maximum height of the power bar
 
 func _ready():
-	# Create the aim indicator (e.g., an arrow or a line)
+	# Create an aim indicator visual
 	var aim_mesh = ImmediateMesh.new()
 	aim_indicator = MeshInstance3D.new()
 	aim_indicator.mesh = aim_mesh
 	add_child(aim_indicator)
 	
-	# Create the power bar indicator
+	# Create a power bar indicator visual
 	power_bar = MeshInstance3D.new()
 	var power_bar_mesh = BoxMesh.new()
 	power_bar_mesh.size = Vector3(0.1, 0.1, 0.1)  # Initial size of the power bar
@@ -70,6 +70,11 @@ func _physics_process(delta):
 func launch_puck():
 	var launch_force = min_launch_force + (max_launch_force - min_launch_force) * (power / 100.0)
 	apply_central_impulse(launch_direction * launch_force)
+	
+	# Add rotation to the puck based on the launch direction
+	var rotation_strength = 5.0  # Adjust the rotation strength as needed
+	apply_torque_impulse(Vector3.UP * rotation_strength)
+	
 	power = 0  # Reset the power after launching
 
 func update_aim_indicator():
