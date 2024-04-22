@@ -1,25 +1,22 @@
 extends RigidBody3D
 
-const POWER_THRESHOLD_WHITE = 25
-const POWER_THRESHOLD_LIGHT_BLUE = 50
-const POWER_THRESHOLD_BLUE = 65
-const POWER_THRESHOLD_BLUE_VIOLET = 75
-const POWER_THRESHOLD_PURPLE = 85
-const POWER_THRESHOLD_PURPLE_RED = 95
+# Configuration options
+var power_bar_colors = {
+	"white": Color.WHITE,
+	"light_blue": Color.LIGHT_BLUE,
+	"blue": Color.BLUE,
+	"blue_violet": Color(0.541176, 0.168627, 0.886275),
+	"purple": Color.PURPLE,
+	"purple_red": Color(0.627451, 0.12549, 0.941176),
+	"red": Color.RED
+}
+var power_thresholds = [25, 50, 65, 75, 85, 95]
 
-const COLOR_WHITE = Color.WHITE
-const COLOR_LIGHT_BLUE = Color.LIGHT_BLUE
-const COLOR_BLUE = Color.BLUE
-const COLOR_BLUE_VIOLET = Color(0.541176, 0.168627, 0.886275)
-const COLOR_PURPLE = Color.PURPLE
-const COLOR_PURPLE_RED = Color(0.627451, 0.12549, 0.941176)
-const COLOR_RED = Color.RED
-
-var min_launch_force = 5.0
-var max_launch_force = 20.0
+@export var min_launch_force = 5.0
+@export var max_launch_force = 20.0
 var launch_direction = Vector3.FORWARD
 var is_aiming = false
-var aim_limit_degrees = 70.0
+@export var aim_limit_degrees = 70.0
 var aim_indicator = null
 
 # Power bar variables
@@ -59,31 +56,32 @@ func _input(event):
 
 func _physics_process(delta):
 	if is_aiming:
-		var mouse_pos = Vector3(get_viewport().get_mouse_position().x, get_viewport().get_mouse_position().y, 0)
-		var viewport_size = Vector3(get_viewport().size.x, get_viewport().size.y, 0)
-		var direction = (mouse_pos - viewport_size / 2).normalized()
-		
-		# Limit the aiming direction to a range relative to the puck's forward direction
-		var aim_limit_radians = deg_to_rad(aim_limit_degrees)
-		var angle = atan2(direction.y, direction.x)
-		angle = clamp(angle, -aim_limit_radians, aim_limit_radians)
-		
-		# Calculate the launch direction relative to the puck's forward direction
-		var puck_forward = -global_transform.basis.z
-		var puck_right = global_transform.basis.x
-		launch_direction = puck_forward * cos(angle) + puck_right * sin(angle)
-		
-		# Update the aim indicator
-		update_aim_indicator()
-		
-		# Update the power bar
+		update_aiming()
 		update_power_bar(delta)
 	else:
-		# Hide the aim indicator when not aiming
 		aim_indicator.mesh.clear_surfaces()
 
+func update_aiming():
+	var mouse_pos = get_viewport().get_mouse_position()
+	var puck_pos = get_viewport().get_camera_3d().unproject_position(global_transform.origin)
+	var direction = (mouse_pos - puck_pos).normalized()
+	
+	# Limit the aiming direction to a range relative to the puck's forward direction
+	var aim_limit_radians = deg_to_rad(aim_limit_degrees)
+	var angle = atan2(direction.y, direction.x)
+	angle = clamp(angle, -aim_limit_radians, aim_limit_radians)
+	
+	# Calculate the launch direction relative to the puck's forward direction
+	var puck_forward = -global_transform.basis.z
+	var puck_right = global_transform.basis.x
+	launch_direction = puck_forward * cos(angle) + puck_right * sin(angle)
+	
+	# Update the aim indicator
+	update_aim_indicator()
+
 func launch_puck():
-	var launch_force = min_launch_force + (max_launch_force - min_launch_force) * (power / 100.0)
+	var power_ratio = power / 100.0
+	var launch_force = min_launch_force + (max_launch_force - min_launch_force) * pow(power_ratio, 2)
 	apply_central_impulse(launch_direction * launch_force)
 	
 	# Add rotation to the puck based on the launch direction
@@ -122,21 +120,26 @@ func update_power_bar_position():
 
 func update_power_bar_color():
 	var power_bar_material = StandardMaterial3D.new()
-	if power <= POWER_THRESHOLD_WHITE:
-		power_bar_material.albedo_color = COLOR_WHITE
-	elif power <= POWER_THRESHOLD_LIGHT_BLUE:
-		power_bar_material.albedo_color = COLOR_LIGHT_BLUE
-	elif power <= POWER_THRESHOLD_BLUE:
-		power_bar_material.albedo_color = COLOR_BLUE
-	elif power <= POWER_THRESHOLD_BLUE_VIOLET:
-		power_bar_material.albedo_color = COLOR_BLUE_VIOLET
-	elif power <= POWER_THRESHOLD_PURPLE:
-		power_bar_material.albedo_color = COLOR_PURPLE
-	elif power <= POWER_THRESHOLD_PURPLE_RED:
-		power_bar_material.albedo_color = COLOR_PURPLE_RED
+	var color_key = ""
+	
+	if power <= power_thresholds[0]:
+		color_key = "white"
+	elif power <= power_thresholds[1]:
+		color_key = "light_blue"
+	elif power <= power_thresholds[2]:
+		color_key = "blue"
+	elif power <= power_thresholds[3]:
+		color_key = "blue_violet"
+	elif power <= power_thresholds[4]:
+		color_key = "purple"
+	elif power <= power_thresholds[5]:
+		color_key = "purple_red"
 	else:
-		power_bar_material.albedo_color = COLOR_RED
+		color_key = "red"
+	
+	power_bar_material.albedo_color = power_bar_colors[color_key]
 	
 	# Ensure the mesh has a surface before setting the override material
 	if power_bar.mesh.get_surface_count() > 0:
 		power_bar.set_surface_override_material(0, power_bar_material)
+
