@@ -44,6 +44,14 @@ script = ExtResource("2_j1rom")
 [node name="score_area" parent="." instance=ExtResource("3_4knuc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
 
+[node name="score_area2" parent="." instance=ExtResource("3_4knuc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+points = 2
+
+[node name="score_area3" parent="." instance=ExtResource("3_4knuc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+points = 1
+
 [node name="score_control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0

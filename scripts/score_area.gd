@@ -1,6 +1,6 @@
 extends Area3D
 
-var points = 3
+@export var points = 3
 var puck_inside = false
 var points_awarded = false
 

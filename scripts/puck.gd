@@ -1,5 +1,20 @@
 extends RigidBody3D
 
+const POWER_THRESHOLD_WHITE = 25
+const POWER_THRESHOLD_LIGHT_BLUE = 50
+const POWER_THRESHOLD_BLUE = 65
+const POWER_THRESHOLD_BLUE_VIOLET = 75
+const POWER_THRESHOLD_PURPLE = 85
+const POWER_THRESHOLD_PURPLE_RED = 95
+
+const COLOR_WHITE = Color.WHITE
+const COLOR_LIGHT_BLUE = Color.LIGHT_BLUE
+const COLOR_BLUE = Color.BLUE
+const COLOR_BLUE_VIOLET = Color(0.541176, 0.168627, 0.886275)
+const COLOR_PURPLE = Color.PURPLE
+const COLOR_PURPLE_RED = Color(0.627451, 0.12549, 0.941176)
+const COLOR_RED = Color.RED
+
 var min_launch_force = 5.0
 var max_launch_force = 20.0
 var launch_direction = Vector3.FORWARD
@@ -49,7 +64,6 @@ func _physics_process(delta):
 		var direction = (mouse_pos - viewport_size / 2).normalized()
 		
 		# Limit the aiming direction to a range relative to the puck's forward direction
-		# Needs to be fixed w/ recent rotation/spin update
 		var aim_limit_radians = deg_to_rad(aim_limit_degrees)
 		var angle = atan2(direction.y, direction.x)
 		angle = clamp(angle, -aim_limit_radians, aim_limit_radians)
@@ -92,29 +106,36 @@ func update_power_bar(delta):
 		power_speed *= -1  # Reverse the direction of power change
 	power = clamp(power, 0, 100)  # Clamp the power between 0 and 100
 	
-	# Update the power bar's height based on the power value
+	update_power_bar_size()
+	update_power_bar_position()
+	update_power_bar_color()
+
+func update_power_bar_size():
 	var power_ratio = power / 100.0
 	power_bar.mesh.size.y = power_bar_max_height * power_ratio
-	
-	# Adjust the power bar's position to grow upwards
+
+func update_power_bar_position():
+	var power_ratio = power / 100.0
+	# Calculate the position of the power bar based on its height
+	# The power bar grows upwards from the center of the puck
 	power_bar.transform.origin.y = 0.5 + (power_bar_max_height * power_ratio) / 2
-	
-	# Update the power bar's color based on the power level
+
+func update_power_bar_color():
 	var power_bar_material = StandardMaterial3D.new()
-	if power <= 25:
-		power_bar_material.albedo_color = Color.WHITE
-	elif power <= 50:
-		power_bar_material.albedo_color = Color.LIGHT_BLUE
-	elif power <= 65:
-		power_bar_material.albedo_color = Color.BLUE
-	elif power <= 75:
-		power_bar_material.albedo_color = Color(0.541176, 0.168627, 0.886275)  # BLUE_VIOLET
-	elif power <= 85:
-		power_bar_material.albedo_color = Color.PURPLE
-	elif power <= 95:
-		power_bar_material.albedo_color = Color(0.627451, 0.12549, 0.941176)  # PURPLE_RED
+	if power <= POWER_THRESHOLD_WHITE:
+		power_bar_material.albedo_color = COLOR_WHITE
+	elif power <= POWER_THRESHOLD_LIGHT_BLUE:
+		power_bar_material.albedo_color = COLOR_LIGHT_BLUE
+	elif power <= POWER_THRESHOLD_BLUE:
+		power_bar_material.albedo_color = COLOR_BLUE
+	elif power <= POWER_THRESHOLD_BLUE_VIOLET:
+		power_bar_material.albedo_color = COLOR_BLUE_VIOLET
+	elif power <= POWER_THRESHOLD_PURPLE:
+		power_bar_material.albedo_color = COLOR_PURPLE
+	elif power <= POWER_THRESHOLD_PURPLE_RED:
+		power_bar_material.albedo_color = COLOR_PURPLE_RED
 	else:
-		power_bar_material.albedo_color = Color.RED
+		power_bar_material.albedo_color = COLOR_RED
 	
 	# Ensure the mesh has a surface before setting the override material
 	if power_bar.mesh.get_surface_count() > 0:
