@@ -2,12 +2,13 @@
 
 [ext_resource type="PackedScene" uid="uid://bn267ap4ap521" path="res://scenes/puck.tscn" id="1_fhs8s"]
 [ext_resource type="Script" path="res://scripts/camera_follow.gd" id="2_j1rom"]
-[ext_resource type="PackedScene" uid="uid://64dwnhqsl6qf" path="res://score_area.tscn" id="3_4knuc"]
+[ext_resource type="PackedScene" uid="uid://64dwnhqsl6qf" path="res://scenes/score_area.tscn" id="3_4knuc"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kabv2"]
 friction = 0.1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a2ah4"]
+albedo_color = Color(0.568627, 0.568627, 0.568627, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_8vms4"]
 material = SubResource("StandardMaterial3D_a2ah4")
@@ -39,6 +40,7 @@ linear_damp = 0.75
 transform = Transform3D(1, 0, 0, 0, 0.927184, 0.374607, 0, -0.374607, 0.927184, 0, 2, 22)
 
 [node name="puck_cam" type="Camera3D" parent="camera"]
+current = true
 script = ExtResource("2_j1rom")
 
 [node name="score_area" parent="." instance=ExtResource("3_4knuc")]
